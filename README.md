@@ -31,14 +31,12 @@ CMS-LIME/
 ├── primitive_library.py
 ├── cms_lime_example.py              # 合成数据示例
 ├── cms_lime_chb_analysis_final.py   # CHB-MIT 分析入口
-├── model/EEGInception_SE.py         # 实验用 backbone
 ├── unified_primitive_selection/     # 统一基元提取 + 重要性评估
 ├── two_stage_selection/             # 两阶段基元选拔
 ├── 可解释归因示例/                 # Faithfulness / 归因可视化
 ├── 后处理过程改进/                 # 标志物融合与动态阈值
 ├── 对生物标志物进行分析/
-├── 跨患者分析/
-└── paper/figures/                   # 论文插图脚本
+└── 跨患者分析/
 ```
 
 ## 快速开始
@@ -97,8 +95,8 @@ python 可解释归因示例/faithfulness_protocol_experiment.py --fast
 - `.venv`、IDE 配置、调试一次性脚本
 - 患者 EEG、`.pkl` 基元库、`.pth` 权重
 - Faithfulness 等实验的完整输出目录
-- 未发表论文的 LaTeX 正文（仅保留作图脚本）
+- 论文稿件与作图脚本、实验用 backbone 源码（本地保留）
 
 ## 许可
 
-MIT License。EEGInception 结构用于实验对照，请同时尊重原模型论文的引用惯例。
+MIT License.
