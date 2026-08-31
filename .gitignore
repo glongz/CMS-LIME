@@ -1,0 +1,51 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+.venv/
+venv/
+env/
+*.egg-info/
+.eggs/
+dist/
+build/
+
+# Editors / OS
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+
+# Secrets and local env
+.env
+.env.*
+*.pem
+
+# Model weights, EEG data, and serialized libraries (obtain CHB-MIT from PhysioNet)
+*.pth
+*.pt
+*.ckpt
+*.edf
+*.fif
+*.pkl
+*.npz
+*.npy
+*.h5
+*.hdf5
+
+# Experiment dumps and figures generated locally
+*_out/
+faithfulness_*/
+deletion_diag_out/
+*.png
+*.pdf
+*.jpg
+*.jpeg
+*.svg
+*.csv
+*.log
+
+# Jupyter
+.ipynb_checkpoints/
