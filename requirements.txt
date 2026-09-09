@@ -11,3 +11,5 @@ networkx>=2.6
 braindecode>=0.5.1
 nolds>=0.5.2
 PyWavelets>=1.1.1
+
+mne>=1.0.0

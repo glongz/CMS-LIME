@@ -1,0 +1,4 @@
+# Local inventory / preprocess summaries (regenerate with the CLIs).
+reports/
+__pycache__/
+*.pyc
