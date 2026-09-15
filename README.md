@@ -14,7 +14,7 @@
 4. **多样性选择**：DPP / 子模块优化，压缩为紧凑、少冗余的解释集。
 5. **生物标志物后处理**：将高重要性基元筛选为跨段可复用标志物，用于增强预测敏感性/特异性。
 
-本仓库只收录**实现与实验脚本**，不含 CHB-MIT / Siena 原始 EEG、训练权重、基元库 `.pkl` 以及大规模实验输出。
+本仓库收录**实现、实验脚本以及 CHB-MIT / Siena 预处理代码**，不含 CHB-MIT / Siena 原始 EEG、训练权重、基元库 `.pkl` 以及大规模实验输出。
 
 ## 仓库结构
 
@@ -31,6 +31,7 @@ CMS-LIME/
 ├── primitive_library.py
 ├── cms_lime_example.py              # 合成数据示例
 ├── cms_lime_chb_analysis_final.py   # CHB-MIT 分析入口
+├── dataset_specific/                # CHB-MIT 预处理（通道对齐、分段、ignore-list）
 ├── siena/                           # Siena 外部验证预处理（对齐 CHB 30-1-240）
 ├── unified_primitive_selection/     # 统一基元提取 + 重要性评估
 ├── two_stage_selection/             # 两阶段基元选拔
@@ -78,9 +79,9 @@ print(explainer.get_explanation_summary(explanation))
 
 - 分段目录标签：`30-1-240` → **SOP = 30 min，SPH = 1 min**（preictal = `[onset−31 min, onset−1 min)`）
 - 评价患者：`chb01`–`chb11`、`chb13`–`chb23`（共 22 人；排除 `chb12`、`chb24`）
-- 通道：18 公共双极导联；另有 11 个 montage 不兼容 EDF 在文件级丢弃（见公开预处理仓 `config.py` / ignore-list）
+- 通道：18 公共双极导联；另有 11 个 montage 不兼容 EDF 在文件级丢弃（见 `dataset_specific/chbmit/config.py` 的 ignore-list）
 - 无额外 band-pass / notch（原生 256 Hz）
-- 预处理公开仓：https://github.com/DongDongBan/chbmit-seizure-prediction/tree/master/dataset_specific/chbmit （路径中的 `dataset_specific` 含下划线）
+- CHB 预处理脚本在本仓库：[`dataset_specific/`](dataset_specific/)（说明见 [`dataset_specific/README.md`](dataset_specific/README.md)）
 
 默认路径可用环境变量覆盖（见 `可解释归因示例/chb_paths.py`）：
 
