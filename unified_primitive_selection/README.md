@@ -33,4 +33,4 @@ framework.save_results("output_folder")
 - `importance_threshold` (default 0.01)
 - `top_k_biomarkers` (default 20)
 
-Outputs include `config.json`, `all_biomarkers.json`, `top_biomarkers.json`, `sample_biomarkers.json`, and `statistics.json`.
+Outputs include `config.json`, `all_biomarkers.json`, `top_biomarkers.json`, `sample_biomarkers.json`, and `statistics.json` (legacy filenames; contents are candidate-marker records).

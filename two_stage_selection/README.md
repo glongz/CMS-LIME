@@ -1,6 +1,6 @@
 # Two-stage primitive selection
 
-Extract candidate EEG primitives (stage 1), then score them with a LIME-style causal perturbation (stage 2).
+Extract candidate EEG primitives (stage 1), then score them with a LIME-style causal perturbation (stage 2). Surviving units are treated as statistically screened candidate markers (not clinical biomarkers).
 
 ## Layout
 
