@@ -12,9 +12,11 @@ Paper (working title): *CMS-LIME: Causal Multi-Scale Interpretable Explanations 
 2. **Causally consistent perturbation.** A directed channel graph (e.g. Granger) is used so that edits to a node are applied together with lagged parents/children, avoiding implausible counterfactuals.
 3. **Sparse local surrogate.** Kernel-weighted Ridge/Lasso maps prediction change to primitives.
 4. **Diversity selection.** DPP / submodular selection compresses the explanation into a compact, low-redundancy set.
-5. **Statistically screened candidate markers.** High-importance primitives are admitted only after a statistical match-rate filter; the resulting *candidate markers* can refine \(P(\text{preictal})\). This is not a clinical biomarker claim.
+5. **Statistically screened candidate markers.** High-importance primitives are admitted only after a permutation / BH-FDR match-rate filter; the resulting *candidate markers* can refine \(P(\text{preictal})\). This is **not** a clinical biomarker claim.
 
 This repository ships **implementation, experiment scripts, and CHB-MIT / Siena preprocess code**. It does not include raw EEG, trained weights, primitive-library `.pkl` files, or large experiment dumps.
+
+**Setting B (paper-aligned).** Cross-patient fusion uses a shared group-recurring candidate-marker pool built from source patients (family-specific template matching; motifs that recur in \(\ge 2\) sources). The held-out patient does **not** re-fit the dictionary \(\mathcal{U}\) or causal graph \(\mathcal{G}\); fusion always uses fixed \(\gamma=0.3\). The adaptive-\(\gamma\) rule is Setting A only.
 
 ## Layout
 
