@@ -1,5 +1,5 @@
 from global_config import *
-from dataset_specific.config import *
+from CHBMIT.config import *
 
 dataset_path = "<path to your chb-mit directory> e.g ./physionet.org/files/chbmit/1.0.0/"
 clean_data_path = "<path to store clean & aligned dataset> e.g ./chbmit_clean"
