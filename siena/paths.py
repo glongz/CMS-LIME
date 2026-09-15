@@ -2,7 +2,7 @@
 """
 Siena default data / report paths (override with environment variables).
 
-Mirrors ``可解释归因示例/chb_paths.py`` so CHB and Siena share the same
+Mirrors ``chb_paths.py`` so CHB and Siena share the same
 configuration style for later GitHub / multi-machine runs::
 
     set SIENA_RAW_ROOT=D:\\public_data\\siena-scalp-eeg-database-1.0.0

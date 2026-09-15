@@ -37,10 +37,9 @@ Small CSVs / summaries go to `siena/reports/` (gitignored by default).
 
 Dependency: `mne`, `numpy` (see repo `requirements.txt`).
 
-## Run (from `paper-main` root)
+## Run (from the CMS-LIME repository root)
 
-```powershell
-cd D:\2025_important_projects\paper-main
+```bash
 python -m siena.inventory
 python -m siena.preprocess --dry-run
 python -m siena.preprocess
