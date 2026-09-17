@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Build per-patient Siena stats from segment_info.json (protocol 30-1-240).
+"""Build per-patient Siena candidate stats from segment_info.json.
 
 Usage (from ``paper-main`` root)::
 
@@ -12,7 +12,7 @@ import csv
 import json
 from pathlib import Path
 
-from .common import FS_OUT, SUBJECTS_IN_RELEASE
+from .common import FS_OUT, PROTOCOL_VERSION, SUBJECTS_IN_RELEASE
 from .paths import SIENA_CLEAN_ROOT, SIENA_REPORTS_DIR, SIENA_SEG_ROOT
 
 
@@ -33,6 +33,8 @@ def summarize(pid: str) -> dict:
         "interictal_hours": 0.0,
         "n_pre_blocks": 0,
         "n_inter_blocks": 0,
+        "setting_a_candidate": False,
+        "protocol": PROTOCOL_VERSION,
     }
     if clean_dir.is_dir():
         row["retained_npy"] = len(list(clean_dir.glob("*.npy")))
@@ -45,19 +47,20 @@ def summarize(pid: str) -> dict:
         a, b = s["Span"]
         dur = max(0, b - a)
         if lab.startswith("Pre"):
-            row["n_pre_blocks"] += 1
+            row["n_pre_blocks"] += s.get("MinuteBlocks", dur // (FS_OUT * 60))
             row["preictal_hours"] += samples_to_hours(dur)
             digits = "".join(ch for ch in lab[3:] if ch.isdigit())
             if digits:
                 pre_ids.add(digits)
         elif lab.startswith("Inter"):
-            row["n_inter_blocks"] += 1
+            row["n_inter_blocks"] += s.get("MinuteBlocks", dur // (FS_OUT * 60))
             row["interictal_hours"] += samples_to_hours(dur)
         elif lab.startswith("Onset"):
             row["n_onset"] += 1
     row["n_preictal_events"] = len(pre_ids)
     row["preictal_hours"] = round(row["preictal_hours"], 3)
     row["interictal_hours"] = round(row["interictal_hours"], 3)
+    row["setting_a_candidate"] = row["n_preictal_events"] >= 2 and row["n_inter_blocks"] > 0
     return row
 
 
@@ -69,7 +72,7 @@ def main() -> None:
     out_dir.mkdir(parents=True, exist_ok=True)
 
     rows = [summarize(pid) for pid in SUBJECTS_IN_RELEASE]
-    out = out_dir / "siena_patient_stats_30-1-240.csv"
+    out = out_dir / "siena_patient_stats_retained_blocks.csv"
     keys = list(rows[0].keys()) if rows else []
     with out.open("w", encoding="utf-8", newline="") as f:
         w = csv.DictWriter(f, fieldnames=keys)
@@ -78,6 +81,7 @@ def main() -> None:
     print("wrote", out)
     eligible = [r for r in rows if r["n_preictal_events"] > 0]
     print(f"patients with ≥1 preictal event: {len(eligible)}")
+    print(f"potential Setting A patients (eligibility only): {sum(r['setting_a_candidate'] for r in rows)}")
     for r in eligible:
         print(
             f"  {r['patient']}: onset={r['n_onset']} pre_events={r['n_preictal_events']} "

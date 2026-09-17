@@ -46,7 +46,7 @@ def parse_seizure_list(path: Path) -> list[dict]:
 
     def _field(blob: str, *keys: str) -> str | None:
         for key in keys:
-            m = re.search(rf"{key}:\s*([^\n]+)", blob, flags=re.IGNORECASE)
+            m = re.search(rf"^[ \t]*{key}:[ \t]*([^\n]+)", blob, flags=re.IGNORECASE | re.MULTILINE)
             if m:
                 return m.group(1).strip()
         return None

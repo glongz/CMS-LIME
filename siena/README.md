@@ -1,4 +1,4 @@
-# Siena Scalp EEG → CHB-matched protocol (30-1-240)
+# Siena Scalp EEG preprocessing under the proposed retained-block rule
 
 Preprocessing for the Neurocomputing revision **R3.7** external validation on the
 [Siena Scalp EEG Database](https://physionet.org/content/siena-scalp-eeg/1.0.0/).
@@ -13,7 +13,9 @@ Part of [CMS-LIME](https://github.com/glongz/CMS-LIME).
 | `common.py` | C₁₈ montage, electrode aliases, clock / EDF-name helpers |
 | `inventory.py` | Step A — C18 feasibility + seizure-list inventory |
 | `preprocess.py` | Step B — EDF → `(18,T)` npy + `segment_info.json` |
-| `make_patient_stats.py` | Hours / event counts after preprocess |
+| `make_patient_stats.py` | Candidate per-patient counts from a generated index |
+| `segment_rules.py` | Preictal and interictal intervals in sample units |
+| `intervals.py` | Interval union and subtraction |
 
 Processed data (not committed) mirrors CHB:
 
@@ -42,13 +44,25 @@ Dependency: `mne`, `numpy` (see repo `requirements.txt`).
 ```bash
 python -m siena.inventory
 python -m siena.preprocess --dry-run
+python -m siena.preprocess --index-only --annotation-overrides PATH_TO_VERIFIED_OVERRIDES.json
 python -m siena.preprocess
 python -m siena.make_patient_stats
 ```
 
 ## Protocol notes
 
-- SOP=30 min, SPH=1 min; lead seizure needs ≥31 min in-file preamble for Pre*
+- SOP=30 min, SPH=1 min; retain an onset when its valid nominal preictal
+  interval contains at least one complete, non-overlapping 60 s block.
+- Exclude 60 min before every onset and 60 min after every offset from
+  interictal labeling; retain other eligible EEG, including seizure-free files.
+- A clustered onset inside a prior seizure guard receives no second preictal
+  label. EDF boundaries and declared acquisition gaps truncate intervals.
 - 50 Hz notch (Siena only); resample 512→256 Hz
-- Channel order = CHB maj (`chb01/channel_info.json`) for cross-dataset transfer
-- PN00 short clips often fail the 31 min preamble (Onset only) — expected
+- Channel order = CHB maj (`chb01/channel_info.json`) for montage consistency.
+- PN10 contains alternative or malformed annotation clocks. The parser now
+  stops rather than silently dropping them; use `--annotation-overrides` only
+  with the time choices documented by the actual experiment.
+- EDF dates in the public release do not establish cross-file chronology.
+  Cross-file guard decisions must be checked against the experiment timeline.
+- `--index-only` does not read or write EEG arrays; use it to inspect the
+  generated labels before committing the processed data to a training run.

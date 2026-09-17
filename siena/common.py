@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from pathlib import Path
+import re
 
 # Protocol (match CHB Tables 1--2).
 FS_OUT = 256
@@ -10,8 +11,10 @@ FS_IN_DEFAULT = 512
 SOP_MIN = 30
 SPH_MIN = 1
 PREICTAL_MIN = SOP_MIN + SPH_MIN  # 31
-INTERICTAL_H = 2.0  # hours, as stated in the manuscript
+PRE_SEIZURE_GUARD_MIN = 60  # exclude from interictal labeling before onset
 POSTICTAL_GUARD_MIN = 60  # exclude residue after offset before interictal
+EVENT_BLOCK_SEC = 60
+PROTOCOL_VERSION = "retained-block-60min-guards-v1"
 
 # CHB maj channel order from
 # D:\public_data\CHBMIT\1_data_clean_18channels\chb01\channel_info.json
@@ -101,12 +104,18 @@ def can_build_c18(electrode_index: dict[str, int]) -> bool:
 
 
 def hms_to_seconds(token: str) -> int:
-    """Parse '19.39.33' or '19:39:33' into seconds from midnight."""
-    t = token.strip().replace(":", ".")
-    parts = [int(x) for x in t.split(".")]
-    if len(parts) != 3:
-        raise ValueError(f"bad HMS token: {token!r}")
-    h, m, s = parts
+    """Accept a single clock with notes; reject ambiguous alternative clocks.
+
+    Spaces between digits (the release's '1 6.49.25') are typographical.
+    Clinical/electrical alternatives require an explicit experiment override.
+    """
+    clocks = re.findall(r'(?<!\d)(\d(?:\s*\d)?)\s*[.:]\s*(\d{1,2})\s*[.:]\s*(\d{1,2})(?!\d)', token)
+    parsed = {tuple(int(re.sub(r'\s+', '', x)) for x in clock) for clock in clocks}
+    if len(parsed) != 1:
+        raise ValueError(f"expected one unambiguous clock, got {token!r}; supply an annotation override")
+    h, m, s = parsed.pop()
+    if not (0 <= h < 24 and 0 <= m < 60 and 0 <= s < 60):
+        raise ValueError(f"invalid clock: {token!r}")
     return h * 3600 + m * 60 + s
 
 
